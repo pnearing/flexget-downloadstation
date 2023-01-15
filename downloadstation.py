@@ -1,4 +1,5 @@
 import os
+import sys
 from syslog import syslog, LOG_ERR, LOG_WARNING, LOG_INFO
 
 import requests
@@ -24,7 +25,7 @@ class DownloadStationPlugin:
             from synology_api.downloadstation import DownloadStation
         except ImportError as e:
             currentDirectory = os.getcwd()
-            errorMessage = "FATAL ERROR: Can't import synology_api.downloadstation. pwd='%s'" % currentDirectory
+            errorMessage = "FATAL ERROR: Can't import synology_api.downloadstation. libDirs='%s'" % str(sys.path)
             syslog(LOG_ERR, errorMessage)
             raise plugin.DependencyError("downloadstation", "downloadstation-client", errorMessage)
 
