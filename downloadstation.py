@@ -80,6 +80,7 @@ class OutputDownloadStation(DownloadStationPlugin):
     @plugin.priority(120)
     def on_task_output(self, task, config):
         '''Add torrents to DownloadStation at exit.'''
+        syslog(LOG_INFO, "on_task_output called.")
         config = self.prepare_config(config)
         client = self.setup_client(config)
     # Don't add when learning
@@ -92,6 +93,8 @@ class OutputDownloadStation(DownloadStationPlugin):
             haveDest = True
     # Add the torrents:
         for entry in task.accepted:
+            syslog(LOG_INFO, str(entry))
+            
         # Use magnet links only:
             if (entry.get('url', '').startswith('magnet:')):
                 if (haveDest == True):
