@@ -16,7 +16,7 @@ class DownloadStationPlugin:
 
     def on_task_start(self, task, config):
         """Fail early if we can't import /configure the DownloadStation client."""
-        self.setup_clent(config)
+        self.setup_client(config)
         return
 
     def setup_client(self, config):
