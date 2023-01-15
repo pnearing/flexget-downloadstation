@@ -1,4 +1,4 @@
-
+import os
 from syslog import syslog, LOG_ERR, LOG_WARNING, LOG_INFO
 
 import requests
@@ -23,12 +23,13 @@ class DownloadStationPlugin:
         try:
             from synology_api.downloadstation import DownloadStation
         except ImportError as e:
-            errorMessage = "FATAL ERROR: Can't import synology_api.downloadstation."
+            currentDirectory = os.getcwd()
+            errorMessage = "FATAL ERROR: Can't import synology_api.downloadstation. pwd='%s'" % currentDirectory
             syslog(LOG_ERR, errorMessage)
-            raise plugin.DependencyError("downloadstation", "downloadstation-client", "synology_api is required but not found.")
+            raise plugin.DependencyError("downloadstation", "downloadstation-client", errorMessage)
 
         config = self.prepare_config(config)
-        dlStn = DownloadStation(
+        client = DownloadStation(
                                 ip_address=config['hostname'],
                                 port=str(config['port']),
                                 username=config['username'],
@@ -38,7 +39,7 @@ class DownloadStationPlugin:
                                 debug=False,
                                 interactive_output=False,
         )
-        return dlStn
+        return client
 
 
     def prepare_config(self, config):
