@@ -28,7 +28,17 @@ class DownloadStationPlugin:
             raise plugin.DependencyError("downloadstation", "downloadstation-client", "synology_api is required but not found.")
 
         config = self.prepare_config(config)
-        return DownloadStation()
+        dlStn = DownloadStation(
+                                ip_address=config['hostname'],
+                                port=str(config['port']),
+                                username=config['username'],
+                                password=config['password'],
+                                secure=config['secure'],
+                                cert_verify=config['verify'],
+                                debug=False,
+                                interactive_output=False,
+        )
+        return dlStn
 
 
     def prepare_config(self, config):
@@ -37,4 +47,57 @@ class DownloadStationPlugin:
         config.setdefault('username', 'admin')
         config.setdefault('secure', True)
         config.setdefault('verify', False)
+        config.setdefault('destination', '')
         return config
+
+
+class OutputDownloadStation(DownloadStationPlugin):
+    '''Add magnet links directly to DownloadStation.'''
+    schema = {
+        'type': 'object',
+        'properties': {
+            'hostname': {'type': 'string'},
+            'port': {'type': 'integer'},
+            'username': {'type': 'string'},
+            'password': {'type': 'string'},
+            'secure': {'type': 'boolean'},
+            'verify': {'type': 'boolean'},
+            'destination': {'type': 'string'}
+        },
+        'required': ['hostname', 'username', 'password']
+    }
+
+    def prepare_config(self, config):
+        config = super().prepare_config(config)
+        return config
+    
+    def __init__(self) -> None:
+        self.apiVersion = 2
+        return
+    
+    @plugin.priority(120)
+    def on_task_output(self, task, config):
+        '''Add torrents to DownloadStation at exit.'''
+        config = self.prepare_config(config)
+        client = self.setup_client(config)
+    # Don't add when learning
+        if (task.options.learn):
+            return
+        if (not task.accepted):
+            return
+        haveDest = False
+        if (config['destination'] != ''):
+            haveDest = True
+    # Add the torrents:
+        for entry in task.accepted:
+        # Use magnet links only:
+            if (entry.get('url', '').startswith('magnet:')):
+                if (haveDest == True):
+                    client.create_task(uri=entry['url'], additional_param={'destination': config['destination']})
+                else:
+                    client.create_task(uri=entry['url'])
+        return
+
+@event('plugin.register')
+def register_plugin():
+    plugin.register(OutputDownloadStation, 'downloadstation', api_ver=2)
