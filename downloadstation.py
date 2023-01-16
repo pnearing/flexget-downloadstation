@@ -24,7 +24,7 @@ class DownloadStationPlugin:
         try:
             from synology_api.downloadstation import DownloadStation
         except ImportError as e:
-            currentDirectory = os.getcwd()
+            # currentDirectory = os.getcwd()
             errorMessage = "FATAL ERROR: Can't import synology_api.downloadstation. libDirs='%s'" % str(sys.path)
             syslog(LOG_ERR, errorMessage)
             raise plugin.DependencyError("downloadstation", "downloadstation-client", errorMessage)
@@ -37,8 +37,10 @@ class DownloadStationPlugin:
                                 password=config['password'],
                                 secure=config['secure'],
                                 cert_verify=config['verify'],
+                                dsm_version=config['dsm_version'],
                                 debug=False,
                                 interactive_output=False,
+
         )
         return client
 
@@ -50,6 +52,7 @@ class DownloadStationPlugin:
         config.setdefault('secure', True)
         config.setdefault('verify', False)
         config.setdefault('destination', '')
+        config.setdefualt('dsm_version', 7)
         return config
 
 
@@ -64,7 +67,8 @@ class OutputDownloadStation(DownloadStationPlugin):
             'password': {'type': 'string'},
             'secure': {'type': 'boolean'},
             'verify': {'type': 'boolean'},
-            'destination': {'type': 'string'}
+            'destination': {'type': 'string'},
+            'dsm_version': {'type': 'integer'}
         },
         'required': ['hostname', 'username', 'password']
     }
@@ -100,20 +104,26 @@ class OutputDownloadStation(DownloadStationPlugin):
     # Add the torrents:
         for entry in task.accepted:
             syslog(LOG_INFO, str(entry))
-            syslog(LOG_INFO, str(entry.keys()))
-            url1 = entry.get('url', '')
-            url2 = entry['url']
-            syslog(LOG_INFO, "url1=%s"%url1)
-            syslog(LOG_INFO, "url2=%s"%url2)
+            for key in entry.keys():
+                syslog(LOG_INFO, "Key %s = %s" % (key, str(entry[key])))
+            # url1 = entry.get('url', '')
+            # url2 = entry['url']
+            # syslog(LOG_INFO, "url1=%s"%url1)
+            # syslog(LOG_INFO, "url2=%s"%url2)
             # syslog(LOG_INFO, str(dir(entry)))
             # syslog(LOG_INFO, str(help(entry)))
+            syslog(LOG_INFO, "URL='%s'" % (entry['url']))
         # Use magnet links only:
             if (entry.get('url', '').startswith('magnet:')):
+                syslog(LOG_INFO, "Entry has a magnet link.")
+                syslog(LOG_INFO, "haveDest=%s" % (str(haveDest)))
                 if (haveDest == True):
-                    client.create_task(uri=entry['url'], additional_param={'destination': config['destination']})
+                    response = client.create_task(uri=entry['url'], additional_param={'destination': config['destination']})
+                    syslog(LOG_INFO, str(response))
                 else:
-                    client.create_task(uri=entry['url'])
-        return
+                    response = client.create_task(uri=entry['url'])
+                    syslog(LOG_INFO, str(response))
+            return
 
 @event('plugin.register')
 def register_plugin():
