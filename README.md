@@ -3,9 +3,13 @@
 
 ## Requirements:
 - Synology NAS with DownloadStation. (Tested using DSM 6.2.4, but should work with DSM 6 and 7)
-- synology pyhton API. Which can be found at: (https://github.com/N4S4/synology-api)
+- synology pyhton API. Which can be found at: https://github.com/N4S4/synology-api
+- flexget.
 
-
+## Installation:
+- install flexget
+- install synology-api
+- Move downloadstation.py to flexgetConfigPath/plugins/client. On most linux systems this can be found at $HOME/.config/flexget/.
 ## Configuration options:
 - hostname: The hostname of the NAS
 - port: The port number to connect to
