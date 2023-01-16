@@ -90,7 +90,7 @@ class OutputDownloadStation(DownloadStationPlugin):
             return
     # If nothing accepted do nothing:
         if (not task.accepted):
-            syslog(LOG_INFO, "No accepted tasks pass.")
+            syslog(LOG_INFO, "No accepted tasks, pass.")
             return
         haveDest = False
         if (config['destination'] != ''):
@@ -100,7 +100,8 @@ class OutputDownloadStation(DownloadStationPlugin):
     # Add the torrents:
         for entry in task.accepted:
             syslog(LOG_INFO, str(entry))
-
+            syslog(LOG_INFO, str(dir(entry)))
+            syslog(LOG_INFO, str(help(entry)))
         # Use magnet links only:
             if (entry.get('url', '').startswith('magnet:')):
                 if (haveDest == True):
