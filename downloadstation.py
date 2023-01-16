@@ -82,19 +82,25 @@ class OutputDownloadStation(DownloadStationPlugin):
         '''Add torrents to DownloadStation at exit.'''
         syslog(LOG_INFO, "on_task_output called.")
         config = self.prepare_config(config)
+        syslog(LOG_INFO, "config= '%s'" % (str(config)))
         client = self.setup_client(config)
     # Don't add when learning
         if (task.options.learn):
+            syslog(LOG_INFO, "task.options.learn == True, pass.")
             return
+    # If nothing accepted do nothing:
         if (not task.accepted):
+            syslog(LOG_INFO, "No accepted tasks pass.")
             return
         haveDest = False
         if (config['destination'] != ''):
             haveDest = True
+        syslog(LOG_INFO, "task = '%s'" % (str(task)))
+
     # Add the torrents:
         for entry in task.accepted:
             syslog(LOG_INFO, str(entry))
-            
+
         # Use magnet links only:
             if (entry.get('url', '').startswith('magnet:')):
                 if (haveDest == True):
