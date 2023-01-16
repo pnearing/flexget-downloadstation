@@ -100,8 +100,13 @@ class OutputDownloadStation(DownloadStationPlugin):
     # Add the torrents:
         for entry in task.accepted:
             syslog(LOG_INFO, str(entry))
-            syslog(LOG_INFO, str(dir(entry)))
-            syslog(LOG_INFO, str(help(entry)))
+            syslog(LOG_INFO, str(entry.keys()))
+            url1 = entry.get('url', '')
+            url2 = entry['url']
+            syslog(LOG_INFO, "url1=%s"%url1)
+            syslog(LOG_INFO, "url2=%s"%url2)
+            # syslog(LOG_INFO, str(dir(entry)))
+            # syslog(LOG_INFO, str(help(entry)))
         # Use magnet links only:
             if (entry.get('url', '').startswith('magnet:')):
                 if (haveDest == True):
