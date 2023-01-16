@@ -52,7 +52,7 @@ class DownloadStationPlugin:
         config.setdefault('secure', True)
         config.setdefault('verify', False)
         config.setdefault('destination', '')
-        config.setdefualt('dsm_version', 7)
+        config.setdefault('dsm_version', 7)
         return config
 
 
