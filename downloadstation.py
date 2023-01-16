@@ -113,16 +113,14 @@ class OutputDownloadStation(DownloadStationPlugin):
             # syslog(LOG_INFO, str(dir(entry)))
             # syslog(LOG_INFO, str(help(entry)))
             syslog(LOG_INFO, "URL='%s'" % (entry['url']))
-        # Use magnet links only:
-            if (entry.get('url', '').startswith('magnet:')):
-                syslog(LOG_INFO, "Entry has a magnet link.")
-                syslog(LOG_INFO, "haveDest=%s" % (str(haveDest)))
-                if (haveDest == True):
-                    response = client.create_task(uri=entry['url'], additional_param={'destination': config['destination']})
-                    syslog(LOG_INFO, str(response))
-                else:
-                    response = client.create_task(uri=entry['url'])
-                    syslog(LOG_INFO, str(response))
+
+            syslog(LOG_INFO, "haveDest=%s" % (str(haveDest)))
+            if (haveDest == True):
+                response = client.create_task(uri=entry['url'], additional_param={'destination': config['destination']})
+                syslog(LOG_INFO, str(response))
+            else:
+                response = client.create_task(uri=entry['url'])
+                syslog(LOG_INFO, str(response))
             return
 
 @event('plugin.register')
