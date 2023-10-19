@@ -8,8 +8,8 @@
 
 ## Installation:
 - install flexget
-- install synology-api
-- Move downloadstation.py to flexgetConfigPath/plugins/client. On most linux systems this can be found at $HOME/.config/flexget/.
+- install synology-api; On DSM it's best to install the library in /[INSTALL_VOLUME]/@appstore/flexget/env/lib/python3.11/site-packages/, and make sure the ownerships are set to 'sc-flexget:synocommunity'.
+- Move downloadstation.py to flexgetConfigPath/plugins/client. On most linux systems this can be found at $HOME/.config/flexget/. On DSM this can be found at /var/packages/flexget/var/. (Thanks to  once375ml for that info.)
 ## Configuration options:
 - hostname: The hostname of the NAS
 - port: The port number to connect to
@@ -33,12 +33,11 @@ templates:
       dsm_version: 6
 
     series_premiere:
-      quality: hdtv+
-      propers: yes
+      quality: sdtv+
 
 tasks:
   eztv:
     rss: https://eztv.re/ezrss.xml
-    quality: hdtv+
+    quality: sdtv+
     template: tv
 
