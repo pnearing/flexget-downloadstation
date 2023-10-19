@@ -17,7 +17,7 @@
 - verify: True -> Verify SSL certificate. Most nas's use self-signed certificates, and this would normally be false.
 - username: The username to connect with.
 - password: The password to connect with.
-- dsm_version: The version number of DSM on the nas. Note: for version 6.2.4, set this to 6.
+- dsm_version: The version number of DSM on the nas. Note: for version 6.2.4, set this to 6, for 7.1 etc, set this to 7
 
 ## Configuration sample:
 templates:
